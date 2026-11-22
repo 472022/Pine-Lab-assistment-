@@ -1,0 +1,7 @@
+14:00:02 ERROR Payment service unavailable
+14:00:05 ERROR Database connection refused
+14:00:09 ERROR Payment service unavailable
+14:00:12 FATAL Order service is down, health check failed
+14:00:15 ERROR Database connection refused
+14:00:20 ERROR Payment service unavailable
+14:00:25 ERROR Authentication service unreachable

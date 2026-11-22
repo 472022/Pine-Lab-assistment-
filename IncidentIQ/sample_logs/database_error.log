@@ -1,0 +1,7 @@
+11:30:01 WARN Slow query detected: 4200ms
+11:30:10 ERROR Database connection pool exhausted
+11:30:14 ERROR Database connection failed
+11:30:19 WARN High response time: 6100ms
+11:30:25 ERROR Database connection pool exhausted
+11:30:31 ERROR Database connection failed
+11:30:40 ERROR Request failed: database timeout after 30000ms

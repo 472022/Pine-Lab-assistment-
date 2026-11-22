@@ -1,0 +1,7 @@
+16:20:01 INFO Login attempt for user admin
+16:20:03 ERROR Authentication failed for user admin: invalid password
+16:20:05 ERROR Authentication failed for user admin: invalid password
+16:20:08 ERROR Authentication failed for user admin: invalid password
+16:20:11 WARN Account admin locked after repeated login failures
+16:20:15 ERROR Authentication failed for user admin: invalid password
+16:20:20 ERROR Token validation failed: token expired

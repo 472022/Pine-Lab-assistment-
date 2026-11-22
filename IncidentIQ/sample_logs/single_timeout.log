@@ -1,0 +1,5 @@
+10:00:01 INFO Application started
+10:02:10 INFO Request GET /orders completed in 120ms
+10:03:44 ERROR Payment API request timeout
+10:04:02 INFO Request GET /orders completed in 98ms
+10:05:15 INFO Health check passed
