@@ -1,0 +1,598 @@
+[
+  {
+    "id": "KB-001",
+    "title": "Payment API returning HTTP 500 Internal Server Error",
+    "category": "API",
+    "symptoms": [
+      "API responds with HTTP 500 Internal Server Error",
+      "Failed or declined transactions at checkout",
+      "Spike in server-side errors on the API dashboard"
+    ],
+    "possible_causes": [
+      "Unhandled exception in application code",
+      "Payment gateway or downstream dependency unavailable",
+      "Database unavailable or connection pool exhausted",
+      "Faulty recent deployment",
+      "Missing or wrong environment variables / API credentials"
+    ],
+    "diagnostic_checks": [
+      "Review application logs for HTTP 500 errors and the stack trace around the failure time",
+      "Check dependencies: verify connectivity to the payment gateway (health endpoint, firewall rules, gateway status page)",
+      "Check the database dependency: availability and connection pool usage",
+      "Review API deployments made shortly before the errors started",
+      "Verify environment variables and API credentials are present and valid (do not paste secrets into tickets)"
+    ],
+    "resolution": [
+      "Inspect logs, dependencies and API configuration to find the failing component",
+      "Fix or roll back the faulty deployment if the errors began after a release",
+      "Restore the failed dependency (gateway or database) or fail over to a healthy instance",
+      "Correct the configuration or rotate expired credentials through the secrets manager",
+      "Re-run failed transactions only after the fix is confirmed"
+    ],
+    "escalation_team": "Backend / API Support Team",
+    "keywords": ["500", "internal server error", "payment", "checkout", "gateway", "transaction failed", "api error"]
+  },
+  {
+    "id": "KB-002",
+    "title": "API returning HTTP 404 Not Found",
+    "category": "API",
+    "symptoms": [
+      "Requests return HTTP 404 Not Found",
+      "Endpoint worked previously but is now missing",
+      "Client integration reports resource not found"
+    ],
+    "possible_causes": [
+      "Wrong endpoint URL, path or API version in the request",
+      "Route removed or renamed in a recent release",
+      "Reverse proxy / API gateway routing misconfiguration",
+      "Requested record ID does not exist"
+    ],
+    "diagnostic_checks": [
+      "Compare the requested URL, HTTP method and API version against the current API documentation",
+      "Check the API gateway or reverse proxy (NGINX, ALB) routing rules for the path",
+      "Review recent releases for removed or renamed routes",
+      "Confirm the requested resource ID exists in the system"
+    ],
+    "resolution": [
+      "Update the client to the correct endpoint and API version",
+      "Restore or correct the gateway / proxy route",
+      "Re-deploy the missing route if it was removed by mistake"
+    ],
+    "escalation_team": "Backend / API Support Team",
+    "keywords": ["404", "not found", "endpoint missing", "route", "wrong url"]
+  },
+  {
+    "id": "KB-003",
+    "title": "API request timeout",
+    "category": "API",
+    "symptoms": [
+      "API calls hang and fail with timeout errors",
+      "HTTP 504 Gateway Timeout from load balancer or proxy",
+      "Intermittent slow responses under load"
+    ],
+    "possible_causes": [
+      "Slow downstream service or third-party dependency",
+      "Long-running database queries",
+      "Server resource saturation (CPU, memory, thread pool)",
+      "Timeout values set too low on client, proxy or load balancer"
+    ],
+    "diagnostic_checks": [
+      "Check API latency metrics (p95 / p99) and the time the timeouts started",
+      "Trace a slow request end-to-end to find the slow dependency",
+      "Check database slow-query logs for queries triggered by the endpoint",
+      "Check CPU, memory and worker/thread pool usage on the API servers",
+      "Compare timeout settings across client, proxy, load balancer and application"
+    ],
+    "resolution": [
+      "Optimise or cache the slow dependency call",
+      "Scale out the API service if resources are saturated",
+      "Align timeout and retry settings across all layers",
+      "Add circuit breakers for unreliable third-party calls"
+    ],
+    "escalation_team": "Backend / API Support Team",
+    "keywords": ["timeout", "504", "gateway timeout", "slow api", "request hangs", "latency"]
+  },
+  {
+    "id": "KB-004",
+    "title": "API returning HTTP 401 / 403 authorization errors",
+    "category": "API",
+    "symptoms": [
+      "Requests rejected with HTTP 401 Unauthorized or 403 Forbidden",
+      "Integration stopped working without code changes",
+      "Token or API key reported as invalid or expired"
+    ],
+    "possible_causes": [
+      "Expired or revoked access token / API key",
+      "Missing Authorization header",
+      "Insufficient scopes or role permissions",
+      "Clock skew invalidating signed tokens"
+    ],
+    "diagnostic_checks": [
+      "Confirm the request includes the Authorization header (inspect headers, never share the key value)",
+      "Check token expiry and whether the key was rotated or revoked",
+      "Verify the client's scopes / roles allow the requested operation",
+      "Check server and client clock synchronisation (NTP)"
+    ],
+    "resolution": [
+      "Issue a new token or rotate the API key through the approved secrets process",
+      "Grant the correct scope or role following the access-request process",
+      "Fix NTP synchronisation if clock skew is found"
+    ],
+    "escalation_team": "Backend / API Support Team",
+    "keywords": ["401", "403", "unauthorized", "forbidden", "token expired", "api key invalid"]
+  },
+  {
+    "id": "KB-005",
+    "title": "Server unavailable / down",
+    "category": "Server",
+    "symptoms": [
+      "Server cannot be reached by ping or SSH / RDP",
+      "Hosted services and websites are offline",
+      "Monitoring shows host down alert"
+    ],
+    "possible_causes": [
+      "Server powered off, crashed or rebooting",
+      "Hypervisor or cloud instance failure",
+      "Network or firewall change blocking access",
+      "Planned maintenance window"
+    ],
+    "diagnostic_checks": [
+      "Check monitoring and the cloud / hypervisor console for instance state",
+      "Ping the server and test SSH / RDP from another host on the same network",
+      "Check the change calendar for maintenance or recent firewall changes",
+      "Review console output or system logs for kernel panic / blue screen"
+    ],
+    "resolution": [
+      "Power on or restart the instance from the console if it is stopped",
+      "Revert the network or firewall change if access was blocked",
+      "Fail over to a standby server if the host has a hardware fault"
+    ],
+    "escalation_team": "Infrastructure / Server Team",
+    "keywords": ["server down", "host unreachable", "server offline", "cannot ssh", "outage"]
+  },
+  {
+    "id": "KB-006",
+    "title": "High CPU utilization on server",
+    "category": "Server",
+    "symptoms": [
+      "CPU usage consistently above 90%",
+      "Slow response from applications on the server",
+      "High load average alerts"
+    ],
+    "possible_causes": [
+      "Runaway or stuck process",
+      "Traffic spike beyond capacity",
+      "Inefficient code or infinite loop after a release",
+      "Malware or crypto-mining process"
+    ],
+    "diagnostic_checks": [
+      "Identify the top CPU-consuming processes (top / htop / Task Manager)",
+      "Correlate the CPU spike with traffic, cron jobs and recent deployments",
+      "Check for unknown or suspicious processes",
+      "Review CPU trend graphs to tell a spike from sustained growth"
+    ],
+    "resolution": [
+      "Restart or kill the runaway process after confirming it is safe to do so",
+      "Scale up or scale out to handle the higher load",
+      "Roll back the release if it introduced inefficient code",
+      "Report suspicious processes to the security team"
+    ],
+    "escalation_team": "Infrastructure / Server Team",
+    "keywords": ["cpu", "high cpu", "load average", "100% cpu", "process hogging"]
+  },
+  {
+    "id": "KB-007",
+    "title": "Server not responding / hung",
+    "category": "Server",
+    "symptoms": [
+      "Server responds to ping but services do not respond",
+      "SSH / RDP sessions freeze or are very slow",
+      "Requests queue up and eventually fail"
+    ],
+    "possible_causes": [
+      "Memory exhaustion and heavy swapping",
+      "Disk I/O saturation",
+      "Deadlocked or hung service process",
+      "File descriptor or connection limit reached"
+    ],
+    "diagnostic_checks": [
+      "Check memory and swap usage (free -m, vmstat) and OOM-killer messages",
+      "Check disk I/O wait (iostat) and disk latency",
+      "Check whether the main service process is alive and accepting connections",
+      "Check open file descriptors and connection counts against limits"
+    ],
+    "resolution": [
+      "Restart the hung service, then the server if the service restart fails",
+      "Add memory or fix the memory-hungry process",
+      "Raise file descriptor / connection limits if they were reached"
+    ],
+    "escalation_team": "Infrastructure / Server Team",
+    "keywords": ["not responding", "hung server", "frozen", "unresponsive", "swap", "out of memory"]
+  },
+  {
+    "id": "KB-008",
+    "title": "Server disk space full",
+    "category": "Server",
+    "symptoms": [
+      "'No space left on device' errors",
+      "Applications fail to write logs or files",
+      "Disk usage alert above 90%"
+    ],
+    "possible_causes": [
+      "Log files growing without rotation",
+      "Old backups or temp files not cleaned up",
+      "Large core dumps",
+      "Unexpected data growth"
+    ],
+    "diagnostic_checks": [
+      "Check filesystem usage (df -h) and find the largest directories (du -sh)",
+      "Check log rotation configuration",
+      "Look for old backups, temp files and core dumps",
+      "Check inode usage (df -i)"
+    ],
+    "resolution": [
+      "Archive or delete old logs and temp files following the retention policy",
+      "Fix or enable log rotation",
+      "Expand the volume if the growth is legitimate"
+    ],
+    "escalation_team": "Infrastructure / Server Team",
+    "keywords": ["disk full", "no space left", "storage", "disk usage", "volume full"]
+  },
+  {
+    "id": "KB-009",
+    "title": "Database connection failure",
+    "category": "Database",
+    "symptoms": [
+      "Application errors such as 'could not connect to server' or 'connection refused'",
+      "Connection pool exhausted errors",
+      "Application pages fail to load data"
+    ],
+    "possible_causes": [
+      "Database service stopped or crashed",
+      "Network / firewall / security group blocking the database port",
+      "Maximum connections limit reached",
+      "Wrong host, port or database name in configuration"
+    ],
+    "diagnostic_checks": [
+      "Check whether the database service is running and accepting connections",
+      "Test connectivity to the database host and port from the application server (telnet / nc)",
+      "Check current connection count against the max_connections limit",
+      "Verify host, port and database name in the application configuration"
+    ],
+    "resolution": [
+      "Start or fail over the database service",
+      "Fix the firewall / security group rule for the database port",
+      "Tune the connection pool or kill idle connections",
+      "Correct the connection string configuration"
+    ],
+    "escalation_team": "Database Support Team",
+    "keywords": ["database down", "db connection", "connection refused", "connection pool", "mysql", "postgres", "sql server"]
+  },
+  {
+    "id": "KB-010",
+    "title": "Database query timeout",
+    "category": "Database",
+    "symptoms": [
+      "Queries fail with timeout or 'statement cancelled' errors",
+      "Reports or pages that run heavy queries load slowly",
+      "Database CPU or I/O spikes"
+    ],
+    "possible_causes": [
+      "Missing or unused index",
+      "Locking or blocking by another transaction",
+      "Outdated table statistics producing a bad query plan",
+      "Large data growth on the queried tables"
+    ],
+    "diagnostic_checks": [
+      "Find the slow query in the slow-query log or query store",
+      "Run EXPLAIN / execution plan to check for full table scans",
+      "Check for blocking sessions and long-running transactions",
+      "Check when table statistics were last updated"
+    ],
+    "resolution": [
+      "Add or fix the index the query needs",
+      "Resolve the blocking transaction",
+      "Update statistics and rebuild fragmented indexes",
+      "Rewrite or paginate the heavy query"
+    ],
+    "escalation_team": "Database Support Team",
+    "keywords": ["query timeout", "slow query", "statement timeout", "locking", "blocking", "index"]
+  },
+  {
+    "id": "KB-011",
+    "title": "Database authentication failure",
+    "category": "Database",
+    "symptoms": [
+      "'Access denied for user' or 'password authentication failed' errors",
+      "Application cannot log in to the database after a change",
+      "Locked database account"
+    ],
+    "possible_causes": [
+      "Database password changed or expired",
+      "Account locked after repeated failed attempts",
+      "User lacks grants on the database or schema",
+      "Connecting host not allowed by access rules (pg_hba.conf, host grants)"
+    ],
+    "diagnostic_checks": [
+      "Check database logs for the exact authentication error",
+      "Check whether the account is locked or its password has expired",
+      "Verify the user's grants on the target database and schema",
+      "Check host-based access rules for the application server's IP"
+    ],
+    "resolution": [
+      "Reset or rotate the credential through the secrets manager and update the application",
+      "Unlock the account after finding the source of the failed attempts",
+      "Grant the missing privileges following the access-request process"
+    ],
+    "escalation_team": "Database Support Team",
+    "keywords": ["access denied", "authentication failed", "db login", "database password", "account locked"]
+  },
+  {
+    "id": "KB-012",
+    "title": "Database deadlocks",
+    "category": "Database",
+    "symptoms": [
+      "'Deadlock detected' or 'deadlock victim' errors",
+      "Intermittent failed transactions under concurrent load",
+      "Retries succeed after a failure"
+    ],
+    "possible_causes": [
+      "Transactions locking tables or rows in different orders",
+      "Long transactions holding locks",
+      "Missing indexes causing wider locks"
+    ],
+    "diagnostic_checks": [
+      "Capture the deadlock graph / report from the database",
+      "Identify the competing queries and their lock order",
+      "Check transaction duration for the affected operations"
+    ],
+    "resolution": [
+      "Make transactions access objects in a consistent order",
+      "Shorten transactions and add retry logic for deadlock victims",
+      "Add indexes to narrow the locked range"
+    ],
+    "escalation_team": "Database Support Team",
+    "keywords": ["deadlock", "deadlock victim", "lock wait", "concurrent transactions"]
+  },
+  {
+    "id": "KB-013",
+    "title": "Internet connectivity failure",
+    "category": "Network",
+    "symptoms": [
+      "No internet access from a workstation or office",
+      "Browser shows 'No internet' or 'ERR_INTERNET_DISCONNECTED'",
+      "Internal resources may still be reachable"
+    ],
+    "possible_causes": [
+      "Cable unplugged, Wi-Fi disconnected or NIC disabled",
+      "No IP address from DHCP (169.254.x.x address)",
+      "Default gateway, router or firewall failure",
+      "ISP outage"
+    ],
+    "diagnostic_checks": [
+      "Check physical connection or Wi-Fi status and that the network adapter is enabled",
+      "Run ipconfig / ip addr to confirm a valid IP address and default gateway",
+      "Ping the default gateway, then a public IP such as 8.8.8.8",
+      "Check whether other users at the same site are affected and check the ISP status"
+    ],
+    "resolution": [
+      "Reconnect the cable / Wi-Fi or re-enable the adapter",
+      "Renew the DHCP lease (ipconfig /release and /renew)",
+      "Restart or fail over the router / firewall",
+      "Raise a ticket with the ISP for a confirmed outage"
+    ],
+    "escalation_team": "Network Support Team",
+    "keywords": ["no internet", "internet down", "wifi", "offline", "network down", "cannot browse"]
+  },
+  {
+    "id": "KB-014",
+    "title": "DNS resolution failure",
+    "category": "Network",
+    "symptoms": [
+      "Websites fail with 'DNS_PROBE_FINISHED_NXDOMAIN' or 'could not resolve host'",
+      "Sites work by IP address but not by name",
+      "Internal hostnames do not resolve"
+    ],
+    "possible_causes": [
+      "DNS server unreachable or down",
+      "Wrong DNS server configured on the client",
+      "Missing or wrong DNS record",
+      "Stale DNS cache"
+    ],
+    "diagnostic_checks": [
+      "Run nslookup / dig against the configured DNS server",
+      "Compare resolution with a known good DNS server",
+      "Confirm the DNS server settings on the client or DHCP scope",
+      "Check the DNS record in the zone for the failing hostname"
+    ],
+    "resolution": [
+      "Flush the DNS cache (ipconfig /flushdns)",
+      "Correct the DNS server settings",
+      "Restore the DNS service or fix the missing record"
+    ],
+    "escalation_team": "Network Support Team",
+    "keywords": ["dns", "nxdomain", "cannot resolve", "hostname", "name resolution", "nslookup"]
+  },
+  {
+    "id": "KB-015",
+    "title": "VPN connection problem",
+    "category": "Network",
+    "symptoms": [
+      "VPN client fails to connect or disconnects frequently",
+      "Connected to VPN but cannot reach internal resources",
+      "VPN authentication or certificate errors"
+    ],
+    "possible_causes": [
+      "Expired credentials, MFA failure or expired certificate",
+      "Outdated VPN client version",
+      "Local firewall or home network blocking VPN ports",
+      "VPN gateway overloaded or down",
+      "Split-tunnel or route configuration issue"
+    ],
+    "diagnostic_checks": [
+      "Confirm the user's account and MFA work for other company services",
+      "Check the VPN client version and its log for the exact error",
+      "Check internet connectivity without VPN and try another network",
+      "Check VPN gateway status and concurrent session count",
+      "If connected but resources are unreachable, check routes and DNS over the tunnel"
+    ],
+    "resolution": [
+      "Reset credentials / re-enrol MFA or renew the client certificate",
+      "Update or reinstall the VPN client",
+      "Allow the VPN ports on the local firewall or use another network",
+      "Escalate gateway capacity or outage to the network team"
+    ],
+    "escalation_team": "Network Support Team",
+    "keywords": ["vpn", "remote access", "tunnel", "anyconnect", "globalprotect", "openvpn", "cannot connect vpn"]
+  },
+  {
+    "id": "KB-016",
+    "title": "Slow network / high latency and packet loss",
+    "category": "Network",
+    "symptoms": [
+      "Slow file transfers and lagging video calls",
+      "High ping times or packet loss",
+      "Problems limited to a site, floor or Wi-Fi area"
+    ],
+    "possible_causes": [
+      "Link saturation by large transfers or backups",
+      "Faulty cable, switch port or access point",
+      "Wi-Fi interference or weak signal",
+      "ISP congestion"
+    ],
+    "diagnostic_checks": [
+      "Run ping and traceroute / pathping to find where latency or loss starts",
+      "Check bandwidth utilisation on the uplink",
+      "Check switch port errors and access point health",
+      "Test wired vs wireless to isolate Wi-Fi problems"
+    ],
+    "resolution": [
+      "Reschedule or throttle large transfers",
+      "Replace the faulty cable / port or move the user to a healthy access point",
+      "Apply QoS for voice and video traffic",
+      "Raise a ticket with the ISP for upstream congestion"
+    ],
+    "escalation_team": "Network Support Team",
+    "keywords": ["latency", "packet loss", "slow network", "lag", "bandwidth", "ping high"]
+  },
+  {
+    "id": "KB-017",
+    "title": "User login failure in application",
+    "category": "Application",
+    "symptoms": [
+      "User cannot log in to the application",
+      "'Invalid username or password' or 'account locked' message",
+      "Single sign-on (SSO) redirect loop or error"
+    ],
+    "possible_causes": [
+      "Wrong or expired password",
+      "Account locked or disabled",
+      "SSO / identity provider issue or certificate expiry",
+      "User not assigned to the application"
+    ],
+    "diagnostic_checks": [
+      "Confirm whether one user or many users are affected",
+      "Check the account status (locked, disabled, password expired) in the directory",
+      "Check the identity provider / SSO status and sign-in logs",
+      "Confirm the user is assigned the application role or group",
+      "Ask the user to try a private browser window to rule out cached sessions"
+    ],
+    "resolution": [
+      "Unlock the account or start a password reset through the self-service portal (never ask for the password)",
+      "Assign the missing application role or group",
+      "Escalate SSO / identity provider failures affecting many users"
+    ],
+    "escalation_team": "L1 Service Desk",
+    "keywords": ["login", "sign in", "cannot log in", "password", "locked out", "sso", "authentication"]
+  },
+  {
+    "id": "KB-018",
+    "title": "Application crash",
+    "category": "Application",
+    "symptoms": [
+      "Application closes unexpectedly or shows a crash dialog",
+      "Service restarts repeatedly (crash loop)",
+      "Error reports or crash dumps generated"
+    ],
+    "possible_causes": [
+      "Bug triggered by specific input or action",
+      "Out-of-memory condition",
+      "Corrupt installation, cache or configuration",
+      "Incompatible update or missing dependency"
+    ],
+    "diagnostic_checks": [
+      "Collect the steps to reproduce and the exact time of the crash",
+      "Check application logs, Windows Event Viewer or crash dumps",
+      "Check memory usage before the crash",
+      "Check for recent application, OS or dependency updates"
+    ],
+    "resolution": [
+      "Clear the application cache or reset its configuration",
+      "Repair or reinstall the application",
+      "Roll back the incompatible update",
+      "Send logs and reproduction steps to the application support team for a code fix"
+    ],
+    "escalation_team": "L2 Application Support",
+    "keywords": ["crash", "crashes", "closes unexpectedly", "stopped working", "crash loop", "segfault"]
+  },
+  {
+    "id": "KB-019",
+    "title": "Slow application performance",
+    "category": "Application",
+    "symptoms": [
+      "Pages or screens take a long time to load",
+      "Users report the application is running slowly",
+      "Increased response times on monitoring"
+    ],
+    "possible_causes": [
+      "Slow database queries",
+      "Server resource saturation",
+      "Network latency between user and application",
+      "Large client-side cache or too much data loaded at once",
+      "Recent release with a performance regression"
+    ],
+    "diagnostic_checks": [
+      "Confirm whether the slowness affects one user, one site or all users",
+      "Check application response time and error rate on monitoring / APM",
+      "Check server CPU, memory and disk usage",
+      "Check database slow-query logs",
+      "Compare performance before and after the latest release"
+    ],
+    "resolution": [
+      "Optimise the slow queries or add caching",
+      "Scale the application servers",
+      "Clear the client cache for single-user issues",
+      "Roll back the release that caused the regression"
+    ],
+    "escalation_team": "L2 Application Support",
+    "keywords": ["slow", "slowness", "performance", "takes long to load", "lagging application", "sluggish"]
+  },
+  {
+    "id": "KB-020",
+    "title": "SSL/TLS certificate expired or invalid",
+    "category": "Application",
+    "symptoms": [
+      "Browser shows 'Your connection is not private' or certificate warning",
+      "API clients fail with SSL handshake or certificate verify errors",
+      "Errors begin on a specific date"
+    ],
+    "possible_causes": [
+      "Certificate expired",
+      "Hostname not covered by the certificate",
+      "Incomplete certificate chain (missing intermediate)",
+      "Client trusts an outdated root store"
+    ],
+    "diagnostic_checks": [
+      "Check the certificate expiry date and hostnames (openssl s_client or browser details)",
+      "Verify the full chain including intermediate certificates",
+      "Confirm which servers / load balancers serve the certificate"
+    ],
+    "resolution": [
+      "Renew and install the certificate on every server / load balancer that serves it",
+      "Install the missing intermediate certificate",
+      "Set up automatic renewal and expiry monitoring"
+    ],
+    "escalation_team": "L2 Application Support",
+    "keywords": ["ssl", "tls", "certificate expired", "https", "not secure", "handshake failed"]
+  }
+]

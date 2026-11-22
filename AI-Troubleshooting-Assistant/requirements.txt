@@ -1,0 +1,9 @@
+# Tip (Linux, no GPU): install the small CPU build of PyTorch first to avoid a multi-GB CUDA download:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+streamlit==1.67.0
+sentence-transformers==6.3.0
+faiss-cpu==1.16.0
+google-genai==3.6.1
+python-dotenv==1.2.4
+pandas==3.1.1
+pytest==9.2.0
